@@ -1,7 +1,8 @@
 var LocalStrategy = require("passport-local").Strategy;
 
 // loading up the user model
-var User = require("../app/models/user");
+var Host = require("../app/models/host");
+var Visitor = require("../app/models/visitor");
 
 module.exports = function(passport) {
   // serialize the user for the session
@@ -11,7 +12,7 @@ module.exports = function(passport) {
 
   // deserialize the user
   passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
+    Host.findById(id, function(err, user) {
       done(err, user);
     });
   });
@@ -30,7 +31,7 @@ module.exports = function(passport) {
         if (email) email = email.toLowerCase();
         // asynchronous part
         process.nextTick(function() {
-          User.findOne({ "local.email": email }, function(err, user) {
+          Host.findOne({ "local.email": email }, function(err, user) {
             if (err) return done(err);
 
             // if no user is found, return the message
@@ -69,7 +70,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
           // if the user is not already logged in:
           if (!req.user) {
-            User.findOne({ "local.email": email }, function(err, user) {
+            Host.findOne({ "local.email": email }, function(err, user) {
               // if there are any errors, return the error
               if (err) return done(err);
 
@@ -82,15 +83,19 @@ module.exports = function(passport) {
                 );
               } else {
                 // create the user
-                var newUser = new User();
+                var newHost = new Host();
 
-                newUser.local.email = email;
-                newUser.local.password = newUser.generateHash(password);
+                newHost.local.email = email;
 
-                newUser.save(function(err) {
+                newHost.local.password = newHost.generateHash(password);
+
+                newHost.local.hostphone = req.body.hostphone;
+                newHost.local.hostname = req.body.hostname;
+
+                newHost.save(function(err) {
                   if (err) return done(err);
 
-                  return done(null, newUser);
+                  return done(null, newHost);
                 });
               }
             });
@@ -98,7 +103,7 @@ module.exports = function(passport) {
           } else if (!req.user.local.email) {
             // ...presumably they're trying to connect a local account
             // BUT let's check if the email used to connect a local account is being used by another user
-            User.findOne({ "local.email": email }, function(err, user) {
+            Host.findOne({ "local.email": email }, function(err, user) {
               if (err) return done(err);
 
               if (user) {
@@ -144,7 +149,7 @@ module.exports = function(passport) {
         process.nextTick(function() {
           // if the user is not already logged in:
           if (!req.user) {
-            User.findOne({ "local.email": email }, function(err, user) {
+            Visitor.findOne({ "local.email": email }, function(err, user) {
               // if there are any errors, return the error
               if (err) return done(err);
 
@@ -157,15 +162,18 @@ module.exports = function(passport) {
                 );
               } else {
                 // create the user
-                var newUser = new User();
+                var newVisitor = new Visitor();
 
-                newUser.local.email = email;
-                newUser.local.password = newUser.generateHash(password);
+                newVisitor.local.email = email;
+                newVisitor.local.password = newVisitor.generateHash(password);
+                newVisitor.local.visitorphone = req.body.visitorphone;
+                newVisitor.local.cintime = req.body.cintime;
+                newVisitor.local.visitorname = req.body.visitorname;
 
-                newUser.save(function(err) {
+                newVisitor.save(function(err) {
                   if (err) return done(err);
 
-                  return done(null, newUser);
+                  return done(null, newVisitor);
                 });
               }
             });
