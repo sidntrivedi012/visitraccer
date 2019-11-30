@@ -21,8 +21,11 @@
   <body>
     <div class="container">
       <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        <h1><span class="fa fa-anchor"></span> Visitor's Dashboard</h1>
+        <!-- <a href="/logout" class="btn btn-default btn-sm">Logout</a> -->
+        <a href="/logout" class="btn btn-default btn-sm"
+          >New Visitor Registration</a
+        >
       </div>
 
       <div class="row">
@@ -30,17 +33,15 @@
         <div class="col-sm-6">
           <div class="well">
             <h3><span class="fa fa-user"></span> Local</h3>
-
-            <% if (visitor.local.email) { %>
+            <% console.log(user) %> <% if (user.local.email) { %>
             <p>
-              <strong>id</strong>: <%= visitor._id %><br />
-              <strong>email</strong>: <%= visitor.local.email %><br />
-              <strong>password</strong>: <%= visitor.local.password %>
+              <strong>id</strong>: <%= user.local.visitorname %><br />
+              <strong>email</strong>: <%= user.local.email %><br />
+              <strong>Phone Number : </strong>: <%= user.local.visitorphone %>
+              <strong>Check In Time : </strong>: <%= user.local.cintime %>
             </p>
 
             <a href="/unlink/local" class="btn btn-default">Unlink</a>
-            <% } else { %>
-            <a href="/connect/local" class="btn btn-default">Connect Local</a>
             <% } %>
           </div>
         </div>

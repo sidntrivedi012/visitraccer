@@ -7,8 +7,8 @@ module.exports = function(app, passport) {
   });
 
   // PROFILE SECTION =========================
-  app.get("/profile", isLoggedIn, function(req, res) {
-    res.render("profile.ejs", {
+  app.get("/dashboard", isLoggedIn, function(req, res) {
+    res.render("dashboard.ejs", {
       user: req.user
     });
   });
@@ -34,8 +34,8 @@ module.exports = function(app, passport) {
   app.post(
     "/hostlogin",
     passport.authenticate("hostlogin", {
-      successRedirect: "/profile", // redirect to the secure profile section
-      failureRedirect: "/login", // redirect back to the signup page if there is an error
+      successRedirect: "/dashboard", // redirect to the secure profile section
+      failureRedirect: "/hostlogin", // redirect back to the signup page if there is an error
       failureFlash: true // allow flash messages
     })
   );
@@ -53,7 +53,7 @@ module.exports = function(app, passport) {
   app.post(
     "/hostsignup",
     passport.authenticate("hostsignup", {
-      successRedirect: "/", // redirect to the secure profile section
+      successRedirect: "/dashboard", // redirect to the secure profile section
       failureRedirect: "/hostsignup", // redirect back to the signup page if there is an error
       failureFlash: true // allow flash messages
     })
@@ -63,7 +63,7 @@ module.exports = function(app, passport) {
   app.post(
     "/visitorsignup",
     passport.authenticate("visitorsignup", {
-      successRedirect: "/profile", // redirect to the secure profile section
+      successRedirect: "/dashboard", // redirect to the secure profile section
       failureRedirect: "/visitorsignup", // redirect back to the signup page if there is an error
       failureFlash: true // allow flash messages
     })

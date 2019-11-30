@@ -12,7 +12,7 @@ module.exports = function(passport) {
 
   // deserialize the user
   passport.deserializeUser(function(id, done) {
-    Host.findById(id, function(err, user) {
+    Visitor.findById(id, function(err, user) {
       done(err, user);
     });
   });
@@ -152,15 +152,8 @@ module.exports = function(passport) {
             Visitor.findOne({ "local.email": email }, function(err, user) {
               // if there are any errors, return the error
               if (err) return done(err);
-
               // check to see if theres already a user with that email
-              if (user) {
-                return done(
-                  null,
-                  false,
-                  req.flash("signupMessage", "That email is already taken.")
-                );
-              } else {
+              else {
                 // create the user
                 var newVisitor = new Visitor();
 
