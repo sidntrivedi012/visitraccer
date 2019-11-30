@@ -1,0 +1,23 @@
+{
+  "name": "visitraccer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sidntrivedi012/visitraccer.git"
+  },
+  "author": "Siddhant N Trivedi (sidntrivedi012)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sidntrivedi012/visitraccer/issues"
+  },
+  "homepage": "https://github.com/sidntrivedi012/visitraccer#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.1"
+  }
+}
