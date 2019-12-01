@@ -1,14 +1,15 @@
 module.exports = function(app, passport) {
-  // normal routes ===============================================================
+  const bodyParser = require("body-parser");
+
   var Visitor = require("./models/visitor");
+  app.use(bodyParser.urlencoded({ extended: false }));
 
   // show the home page (will also have our login links)
   app.get("/", function(req, res) {
     res.render("index.ejs");
   });
 
-  // PROFILE SECTION =========================
-  app.get("/dashboard", isLoggedIn, function(req, res) {
+  app.get("/dashboard", function(req, res) {
     Visitor.find({ "local.checkedout": "no" }).exec(function(err, users) {
       console.log(users);
 
@@ -19,8 +20,21 @@ module.exports = function(app, passport) {
 
   // LOGOUT ==============================
   app.get("/logout", function(req, res) {
-    req.logout();
-    res.redirect("/");
+    // console.log(req.query);
+    var reqData = JSON.parse(JSON.stringify(req.query));
+    console.log(reqData);
+
+    Visitor.update(
+      { "local.email": reqData.emailid },
+      { $set: { "local.checkedout": "yes", "local.couttime": "12" } }
+    ).exec(function(err, user) {
+      if (err) console.log(err);
+      else {
+        console.log("db updated");
+        // res.sendStatus(201);
+        res.redirect("/dashboard");
+      }
+    });
   });
 
   // =============================================================================
@@ -73,23 +87,6 @@ module.exports = function(app, passport) {
     })
   );
 
-  //   // google ---------------------------------
-
-  //   // send to google to do the authentication
-  //   app.get(
-  //     "/auth/google",
-  //     passport.authenticate("google", { scope: ["profile", "email"] })
-  //   );
-
-  //   // the callback after google has authenticated the user
-  //   app.get(
-  //     "/auth/google/callback",
-  //     passport.authenticate("google", {
-  //       successRedirect: "/profile",
-  //       failureRedirect: "/"
-  //     })
-  //   );
-
   // =============================================================================
   // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
   // =============================================================================
@@ -107,23 +104,6 @@ module.exports = function(app, passport) {
     })
   );
 
-  // google ---------------------------------
-
-  //   // send to google to do the authentication
-  //   app.get(
-  //     "/connect/google",
-  //     passport.authorize("google", { scope: ["profile", "email"] })
-  //   );
-
-  //   // the callback after google has authorized the user
-  //   app.get(
-  //     "/connect/google/callback",
-  //     passport.authorize("google", {
-  //       successRedirect: "/profile",
-  //       failureRedirect: "/"
-  //     })
-  //   );
-
   // =============================================================================
   // UNLINK ACCOUNTS =============================================================
   // =============================================================================
@@ -132,7 +112,7 @@ module.exports = function(app, passport) {
   // user account will stay active in case they want to reconnect in the future
 
   // local -----------------------------------
-  app.get("/unlink/local", isLoggedIn, function(req, res) {
+  app.get("/unlink/local", function(req, res) {
     var user = req.user;
     user.local.email = undefined;
     user.local.password = undefined;
@@ -140,20 +120,11 @@ module.exports = function(app, passport) {
       res.redirect("/profile");
     });
   });
-
-  // google ---------------------------------
-  //   app.get("/unlink/google", isLoggedIn, function(req, res) {
-  //     var user = req.user;
-  //     user.google.token = undefined;
-  //     user.save(function(err) {
-  //       res.redirect("/profile");
-  //     });
-  //   });
 };
 
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) return next();
+// // route middleware to ensure user is logged in
+// function isLoggedIn(req, res, next) {
+//   if (req.isAuthenticated()) return next();
 
-  res.redirect("/");
-}
+//   res.redirect("/");
+// }

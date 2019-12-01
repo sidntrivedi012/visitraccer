@@ -16,36 +16,61 @@
         word-wrap: break-word;
       }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("a").click(function () {
+          var attrid = $(this).attr('id');
+          console.log(attrid);
+          
+          if (attrid !="newButton"){
+          console.log(attrid);
+          let mailid="m"+attrid;
+          let phoneid = "p"+attrid;
+          console.log(mailid);
+          var email=document.getElementById(mailid).innerHTML;
+          var phoneno = document.getElementById(phoneid).innerHTML;
+          console.log(phoneno);
+          
+           $.get("/logout",
+              {
+                emailid: email,
+                phone: phoneno
+              },
+              function (data, status) {
+                console.log(status);
+              });
+            }
+          });
+        });
+    </script>
   </head>
 
   <body>
     <div class="container">
       <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Visitor's Dashboard</h1>
-        <!-- <a href="/logout" class="btn btn-default btn-sm">Logout</a> -->
-        <a href="/logout" class="btn btn-default btn-sm"
+    <a href="/visitorsignup" class="btn btn-default btn-sm" id="newButton"
           >New Visitor Registration</a
         >
       </div>
 
       <div class="row">
-        <!-- LOCAL INFORMATION -->
+        <% var i =1;%>
         <% users.forEach(function (user) { %>
-        <div class="col-sm-6">
+        <div  class="col-sm-6" >
           <div class="well">
-            <h3>
-              <span class="fa fa-user"></span> <%= user.local.visitorname %>
+            <h3 >
+              <span class="fa fa-user" id=<%= i %>  </span> <%= user.local.visitorname %>
             </h3>
-            <% console.log(user) %> <% if (user.local.email) { %>
-            <p>
-              <strong>email</strong>: <%= user.local.email %><br />
-              <strong>Phone Number</strong>: <%= user.local.visitorphone %><br />
-              <strong>Check In Time</strong>: <%= user.local.cintime %>
-            </p>
-
-            <!-- <a href="/unlink/local" class="btn btn-default">Unlink</a> -->
-            <a href="/checkout" class="btn btn-default">Checkout</a>
-
+            <% if (user.local.email) { %>
+              <p>
+              <p id=<%="m"+i %>><%= user.local.email %></p><br />
+              <p id=<%="p"+i %>><%= user.local.visitorphone %></p><br />
+              <p id=<%= i %>><%= user.local.cintime %></p>
+              </p>
+            <a  class="btn btn-default" id=<%= i %>>Checkout</a>
+            <% ++i; %>
             <% } %>
           </div>
         </div>

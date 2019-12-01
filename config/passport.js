@@ -12,7 +12,7 @@ module.exports = function(passport) {
 
   // deserialize the user
   passport.deserializeUser(function(id, done) {
-    Visitor.findById(id, function(err, user) {
+    Host.findById(id, function(err, user) {
       done(err, user);
     });
   });
@@ -147,6 +147,8 @@ module.exports = function(passport) {
         if (email) email = email.toLowerCase();
         // asynchronous
         process.nextTick(function() {
+          // console.log(req.user);
+
           // if the user is not already logged in:
           if (!req.user) {
             Visitor.findOne({ "local.email": email }, function(err, user) {
@@ -164,6 +166,8 @@ module.exports = function(passport) {
                 newVisitor.local.cintime = req.body.cintime;
                 newVisitor.local.couttime = "";
                 newVisitor.local.checkedout = "no";
+
+                // console.log("visitors inserted");
 
                 newVisitor.save(function(err) {
                   if (err) return done(err);
