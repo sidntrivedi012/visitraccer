@@ -8,7 +8,9 @@ var visitorSchema = mongoose.Schema({
     email: String,
     visitorphone: Number,
     password: String,
-    cintime: String
+    cintime: String,
+    couttime: String,
+    checkedout: String
   }
 });
 

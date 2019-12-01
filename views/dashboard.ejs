@@ -30,21 +30,26 @@
 
       <div class="row">
         <!-- LOCAL INFORMATION -->
+        <% users.forEach(function (user) { %>
         <div class="col-sm-6">
           <div class="well">
-            <h3><span class="fa fa-user"></span> Local</h3>
+            <h3>
+              <span class="fa fa-user"></span> <%= user.local.visitorname %>
+            </h3>
             <% console.log(user) %> <% if (user.local.email) { %>
             <p>
-              <strong>id</strong>: <%= user.local.visitorname %><br />
               <strong>email</strong>: <%= user.local.email %><br />
-              <strong>Phone Number : </strong>: <%= user.local.visitorphone %>
-              <strong>Check In Time : </strong>: <%= user.local.cintime %>
+              <strong>Phone Number</strong>: <%= user.local.visitorphone %><br />
+              <strong>Check In Time</strong>: <%= user.local.cintime %>
             </p>
 
-            <a href="/unlink/local" class="btn btn-default">Unlink</a>
+            <!-- <a href="/unlink/local" class="btn btn-default">Unlink</a> -->
+            <a href="/checkout" class="btn btn-default">Checkout</a>
+
             <% } %>
           </div>
         </div>
+        <% }) %>
       </div>
     </div>
   </body>

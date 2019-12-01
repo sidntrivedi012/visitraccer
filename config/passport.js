@@ -157,11 +157,13 @@ module.exports = function(passport) {
                 // create the user
                 var newVisitor = new Visitor();
 
+                newVisitor.local.visitorname = req.body.visitorname;
                 newVisitor.local.email = email;
                 newVisitor.local.password = newVisitor.generateHash(password);
                 newVisitor.local.visitorphone = req.body.visitorphone;
                 newVisitor.local.cintime = req.body.cintime;
-                newVisitor.local.visitorname = req.body.visitorname;
+                newVisitor.local.couttime = "";
+                newVisitor.local.checkedout = "no";
 
                 newVisitor.save(function(err) {
                   if (err) return done(err);

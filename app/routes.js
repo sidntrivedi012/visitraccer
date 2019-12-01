@@ -1,5 +1,6 @@
 module.exports = function(app, passport) {
   // normal routes ===============================================================
+  var Visitor = require("./models/visitor");
 
   // show the home page (will also have our login links)
   app.get("/", function(req, res) {
@@ -8,8 +9,11 @@ module.exports = function(app, passport) {
 
   // PROFILE SECTION =========================
   app.get("/dashboard", isLoggedIn, function(req, res) {
-    res.render("dashboard.ejs", {
-      user: req.user
+    Visitor.find({ "local.checkedout": "no" }).exec(function(err, users) {
+      console.log(users);
+
+      if (err) throw err;
+      res.render("dashboard.ejs", { users: users });
     });
   });
 
