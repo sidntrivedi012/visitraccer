@@ -180,31 +180,29 @@ module.exports = function(passport) {
                 newVisitor.local.couttime = "";
                 newVisitor.save(function(err) {
                   if (err) return done(err);
-
+                  Host.findOne({})
+                    .sort({ _id: -1 })
+                    .limit(1)
+                    .exec(function(err, result) {
+                      if (err) console.log(err);
+                      console.log(result);
+                      let text =
+                        "Visitor Name - " +
+                        req.body.visitorname +
+                        "\n" +
+                        "Email address - " +
+                        email +
+                        "\n" +
+                        "Phone number - " +
+                        req.body.visitorphone +
+                        "\n" +
+                        "Check-in Time - " +
+                        timestamp;
+                      sendFunc.sendmail(result.local.email, "host", text);
+                      sendSMS.store(result.local.hostphone, text);
+                    });
                   return done(null, newVisitor);
                 });
-
-                Host.findOne({})
-                  .sort({ _id: -1 })
-                  .limit(1)
-                  .exec(function(err, result) {
-                    if (err) console.log(err);
-                    console.log(result);
-                    let text =
-                      "Visitor Name - " +
-                      req.body.visitorname +
-                      "\n" +
-                      "Email address - " +
-                      email +
-                      "\n" +
-                      "Phone number - " +
-                      req.body.visitorphone +
-                      "\n" +
-                      "Check-in Time - " +
-                      timestamp;
-                    // sendFunc.sendmail(result.local.email, "host", text);
-                    // sendSMS.store(result.local.hostphone, text);
-                  });
               }
             });
           }
