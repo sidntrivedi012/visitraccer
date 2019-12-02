@@ -6,12 +6,12 @@ const nexmo = new Nexmo({
   apiSecret: process.env.NEXMOAPISECRET
 });
 
-function store(hostphone) {
+function store(hostphone, text) {
   hostphone = "91" + hostphone;
   nexmo.message.sendSms(
     "919956622300",
     hostphone,
-    "yo",
+    text,
     (err, responseData) => {
       if (err) {
         console.log(err);

@@ -1,7 +1,7 @@
 var nodemailer = require("nodemailer");
 require("dotenv").config();
 
-function sendmail(destid) {
+function sendmail(destid, flag, text) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -10,20 +10,40 @@ function sendmail(destid) {
     }
   });
 
-  var mailOptions = {
-    from: process.env.EMAILADDRESS,
-    to: destid,
-    subject: "Sending Email using Node.js",
-    text: "That was easy!"
-  };
+  if (flag == "host") {
+    var mailOptions = {
+      from: process.env.EMAILADDRESS,
+      to: destid,
+      subject: "Details about the upcoming visitor.",
+      text: text
+    };
 
-  transporter.sendMail(mailOptions, function(error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
+    transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  }
+  if (flag == "visitor") {
+    console.log(text);
+
+    var mailOptions = {
+      from: process.env.EMAILADDRESS,
+      to: destid,
+      subject: "Thanks for the visit.",
+      text: text
+    };
+
+    transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  }
 }
 
 module.exports = { sendmail };

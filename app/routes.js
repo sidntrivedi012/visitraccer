@@ -2,6 +2,8 @@ module.exports = function(app, passport) {
   const bodyParser = require("body-parser");
   const sendFunc = require("../config/sendmail");
   var Visitor = require("./models/visitor");
+  var Host = require("./models/host");
+  let hostname, address;
   app.use(
     bodyParser.urlencoded({
       extended: false
@@ -18,6 +20,13 @@ module.exports = function(app, passport) {
 
   // LOGOUT ==============================
   app.get("/logout", function(req, res) {
+    Host.remove({}, function(err, result) {
+      if (err) {
+        console.err(err);
+      } else {
+        console.log("Host Logged Out");
+      }
+    });
     req.logout();
     res.redirect("/");
   });
@@ -25,34 +34,77 @@ module.exports = function(app, passport) {
   // VISITOR DASHBOARD================================
 
   app.get("/dashboard", function(req, res) {
-    Visitor.findOne({ "local.checkedout": "no" }).exec(function(err, users) {
-      // console.log( users);
+    console.log("In dashboard");
 
-      if (err) throw err;
-      res.render("dashboard.ejs", {
-        users: users
+    Visitor.find({ "local.checkedout": "no" })
+      .sort({ _id: -1 })
+      .limit(1)
+      .exec(function(err, result) {
+        console.log(result);
+
+        if (err) throw err;
+        res.render("dashboard.ejs", {
+          users: result,
+          error: false
+        });
       });
-    });
   });
 
   // VISITOR CHECKOUT ==============================
 
   app.get("/checkout", function(req, res) {
-    // console.log(req.query);
     var reqData = JSON.parse(JSON.stringify(req.query));
     console.log(reqData);
+    var d = new Date();
+    let day = d.getDay();
+    let hrs = d.getHours();
+    let mins = d.getMinutes();
+    let checkouttime = hrs + ":" + mins;
+    Host.find({})
+      .sort({ _id: -1 })
+      .limit(1)
+      .exec(function(err, result) {
+        if (err) console.error(err);
+        console.log(reqData);
 
-    Visitor.update(
-      { "local.email": reqData.email },
-      { $set: { "local.checkedout": "yes", "local.couttime": "12" } }
-    ).exec(function(err, user) {
-      if (err) console.log(err);
-      else {
-        console.log(user);
-        res.redirect("/home");
-      }
-    });
-    sendFunc.sendmail(reqData.email);
+        hostname = result[0].local.hostname;
+        address = result[0].local.address;
+        let text =
+          "Name - " +
+          reqData.name +
+          "\n" +
+          "Phone Number - " +
+          reqData.phone +
+          "\n" +
+          "Check-in Time - " +
+          reqData.cintime +
+          "\n" +
+          "Checkout Time - " +
+          checkouttime +
+          "\n" +
+          "Host Name - " +
+          hostname +
+          "\n" +
+          "Address Visited - " +
+          address;
+        Visitor.update(
+          { "local.email": reqData.email },
+          {
+            $set: {
+              "local.checkedout": "yes",
+              "local.couttime": checkouttime
+            }
+          }
+        ).exec(function(err, user) {
+          if (err) console.log(err);
+          else {
+            console.log(user);
+            sendFunc.sendmail(reqData.email, "visitor", text);
+          }
+        });
+      });
+
+    res.redirect("/home");
   });
 
   //HOST LOGINS=================================
@@ -81,11 +133,6 @@ module.exports = function(app, passport) {
     });
   });
 
-  app.get("/visitorsignup", function(req, res) {
-    res.render("visitorsignup.ejs", {
-      message: req.flash("signupMessage")
-    });
-  });
   // process the host signup form
   app.post(
     "/hostsignup",
@@ -97,6 +144,12 @@ module.exports = function(app, passport) {
   );
 
   // VISITOR SIGNUP===================================
+
+  app.get("/visitorsignup", function(req, res) {
+    res.render("visitorsignup.ejs", {
+      message: req.flash("signupMessage")
+    });
+  });
 
   app.post(
     "/visitorsignup",
