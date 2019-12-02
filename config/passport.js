@@ -1,11 +1,13 @@
 var LocalStrategy = require("passport-local").Strategy;
+const sendFunc = require("./sendmail");
 
-// loading up the user model
+// loading up the models
 var Host = require("../app/models/host");
 var Visitor = require("../app/models/visitor");
 
+let hostemail = "";
+let hostphone = "";
 module.exports = function(passport) {
-  // serialize the user for the session
   passport.serializeUser(function(user, done) {
     done(null, user.id);
   });
@@ -17,7 +19,7 @@ module.exports = function(passport) {
     });
   });
 
-  // LOCAL (HOST) LOGIN
+  // (HOST) LOGIN------------------
 
   passport.use(
     "hostlogin",
@@ -29,6 +31,7 @@ module.exports = function(passport) {
       },
       function(req, email, password, done) {
         if (email) email = email.toLowerCase();
+
         // asynchronous part
         process.nextTick(function() {
           Host.findOne({ "local.email": email }, function(err, user) {
@@ -49,14 +52,18 @@ module.exports = function(passport) {
                 req.flash("loginMessage", "Oops! Wrong password.")
               );
             // all is well, return user
-            else return done(null, user);
+            else {
+              hostemail = email;
+              hostphone = req.user.hostphone;
+              return done(null, user);
+            }
           });
         });
       }
     )
   );
 
-  // HOST SIGNUP
+  // HOST SIGNUP-------------------------
   passport.use(
     "hostsignup",
     new LocalStrategy(
@@ -91,7 +98,10 @@ module.exports = function(passport) {
 
                 newHost.local.hostphone = req.body.hostphone;
                 newHost.local.hostname = req.body.hostname;
-
+                newHost.local.address = req.body.address;
+                hostemail = email;
+                console.log(hostemail);
+                hostphone = req.body.hostphone;
                 newHost.save(function(err) {
                   if (err) return done(err);
 
@@ -133,7 +143,9 @@ module.exports = function(passport) {
     )
   );
 
-  // VISITOR SIGNUP
+  // HOST LOGOUT ------------------------------
+
+  // VISITOR SIGNUP----------------------------
 
   passport.use(
     "visitorsignup",
@@ -145,6 +157,8 @@ module.exports = function(passport) {
       },
       function(req, email, password, done) {
         if (email) email = email.toLowerCase();
+        console.log(email);
+        console.log(req.user);
         // asynchronous
         process.nextTick(function() {
           // console.log(req.user);
@@ -166,8 +180,9 @@ module.exports = function(passport) {
                 newVisitor.local.cintime = req.body.cintime;
                 newVisitor.local.couttime = "";
                 newVisitor.local.checkedout = "no";
+                console.log("Host email - ", hostemail);
 
-                // console.log("visitors inserted");
+                // sendFunc.sendmail(hostemail);
 
                 newVisitor.save(function(err) {
                   if (err) return done(err);

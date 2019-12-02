@@ -20,27 +20,20 @@
     <script>
       $(document).ready(function () {
         $("a").click(function () {
-          var attrid = $(this).attr('id');
-          console.log(attrid);
+         
+          var email=document.getElementById("email").innerHTML;
+          var phoneno = document.getElementById("visphone").innerHTML;
           
-          if (attrid !="newButton"){
-          console.log(attrid);
-          let mailid="m"+attrid;
-          let phoneid = "p"+attrid;
-          console.log(mailid);
-          var email=document.getElementById(mailid).innerHTML;
-          var phoneno = document.getElementById(phoneid).innerHTML;
-          console.log(phoneno);
-          
-           $.get("/logout",
+           $.get("/checkout",
               {
-                emailid: email,
+                email: email,
                 phone: phoneno
               },
               function (data, status) {
                 console.log(status);
+                  
+                 window.location="/home";
               });
-            }
           });
         });
     </script>
@@ -50,31 +43,27 @@
     <div class="container">
       <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Visitor's Dashboard</h1>
-    <a href="/visitorsignup" class="btn btn-default btn-sm" id="newButton"
-          >New Visitor Registration</a
-        >
+    <!-- <a href="/visitorsignup" class="btn btn-default btn-sm" id="newButton"
+          >New Visitor Registration</a -->
+        
       </div>
 
       <div class="row">
-        <% var i =1;%>
-        <% users.forEach(function (user) { %>
-        <div  class="col-sm-6" >
+        <div class="col-sm-6" >
           <div class="well">
             <h3 >
-              <span class="fa fa-user" id=<%= i %>  </span> <%= user.local.visitorname %>
+              <span class="fa fa-user" id="visname">  </span> <%= users.local.visitorname %>
             </h3>
-            <% if (user.local.email) { %>
+            <% if (users.local.email) { %>
               <p>
-              <p id=<%="m"+i %>><%= user.local.email %></p><br />
-              <p id=<%="p"+i %>><%= user.local.visitorphone %></p><br />
-              <p id=<%= i %>><%= user.local.cintime %></p>
+              <p id="email"><%= users.local.email %></p><br />
+              <p id="visphone"><%= users.local.visitorphone %></p><br />
+              <p id="cintime"><%= users.local.cintime %></p>
               </p>
-            <a  class="btn btn-default" id=<%= i %>>Checkout</a>
-            <% ++i; %>
+            <a  class="btn btn-danger btn-lg" id="coutButton">Checkout</a>
             <% } %>
           </div>
         </div>
-        <% }) %>
       </div>
     </div>
   </body>

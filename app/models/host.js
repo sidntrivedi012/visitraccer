@@ -7,7 +7,8 @@ var hostSchema = mongoose.Schema({
     hostname: String,
     email: String,
     hostphone: String,
-    password: String
+    password: String,
+    address: String
   }
 });
 
