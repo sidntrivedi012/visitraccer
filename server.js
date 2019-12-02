@@ -4,6 +4,7 @@ var port = process.env.PORT || 8080;
 var mongoose = require("mongoose");
 var passport = require("passport");
 var flash = require("connect-flash");
+require("dotenv").config();
 
 var morgan = require("morgan");
 var cookieParser = require("cookie-parser");
@@ -25,7 +26,7 @@ app.set("view engine", "ejs");
 
 app.use(
   session({
-    secret: "mark42war", // session secret
+    secret: process.env.SESSIONSECRET, // session secret
     resave: true,
     saveUninitialized: true
   })

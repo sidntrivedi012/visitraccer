@@ -9,7 +9,7 @@ const nexmo = new Nexmo({
 function store(hostphone, text) {
   hostphone = "91" + hostphone;
   nexmo.message.sendSms(
-    "919956622300",
+    process.env.SENDERPHONENUMBER,
     hostphone,
     text,
     (err, responseData) => {
