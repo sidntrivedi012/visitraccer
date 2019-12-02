@@ -1,5 +1,6 @@
 var LocalStrategy = require("passport-local").Strategy;
 const sendFunc = require("./sendmail");
+const sendSMS = require("../config/sendSMS");
 
 // loading up the models
 var Host = require("../app/models/host");
@@ -18,50 +19,50 @@ module.exports = function(passport) {
       done(err, user);
     });
   });
-
   // (HOST) LOGIN------------------
 
-  passport.use(
-    "hostlogin",
-    new LocalStrategy(
-      {
-        usernameField: "email",
-        passwordField: "password",
-        passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
-      },
-      function(req, email, password, done) {
-        if (email) email = email.toLowerCase();
+  // passport.use(
+  //   "hostlogin",
+  //   new LocalStrategy(
+  //     {
+  //       usernameField: "email",
+  //       passwordField: "password",
+  //       passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+  //     },
+  //     function(req, email, password, done) {
+  //       if (email) email = email.toLowerCase();
 
-        // asynchronous part
-        process.nextTick(function() {
-          Host.findOne({ "local.email": email }, function(err, user) {
-            if (err) return done(err);
+  //       // asynchronous part
+  //       process.nextTick(function() {
+  //         Host.findOne({ "local.email": email }, function(err, user) {
+  //           if (err) return done(err);
 
-            // if no user is found, return the message
-            if (!user)
-              return done(
-                null,
-                false,
-                req.flash("loginMessage", "No user found.")
-              );
+  //           // if no user is found, return the message
+  //           if (!user)
+  //             return done(
+  //               null,
+  //               false,
+  //               req.flash("loginMessage", "No user found.")
+  //             );
 
-            if (!user.validPassword(password))
-              return done(
-                null,
-                false,
-                req.flash("loginMessage", "Oops! Wrong password.")
-              );
-            // all is well, return user
-            else {
-              hostemail = email;
-              hostphone = req.user.hostphone;
-              return done(null, user);
-            }
-          });
-        });
-      }
-    )
-  );
+  //           if (!user.validPassword(password))
+  //             return done(
+  //               null,
+  //               false,
+  //               req.flash("loginMessage", "Oops! Wrong password.")
+  //             );
+  //           // all is well, return user
+  //           else {
+  //             hostemail = email;
+  //             console.log(req.user);
+  //             hostphone = req.user.hostphone;
+  //             return done(null, user);
+  //           }
+  //         });
+  //       });
+  //     }
+  //   )
+  // );
 
   // HOST SIGNUP-------------------------
   passport.use(
@@ -100,7 +101,6 @@ module.exports = function(passport) {
                 newHost.local.hostname = req.body.hostname;
                 newHost.local.address = req.body.address;
                 hostemail = email;
-                console.log(hostemail);
                 hostphone = req.body.hostphone;
                 newHost.save(function(err) {
                   if (err) return done(err);
@@ -157,12 +157,8 @@ module.exports = function(passport) {
       },
       function(req, email, password, done) {
         if (email) email = email.toLowerCase();
-        console.log(email);
-        console.log(req.user);
         // asynchronous
         process.nextTick(function() {
-          // console.log(req.user);
-
           // if the user is not already logged in:
           if (!req.user) {
             Visitor.findOne({ "local.email": email }, function(err, user) {
@@ -180,14 +176,17 @@ module.exports = function(passport) {
                 newVisitor.local.cintime = req.body.cintime;
                 newVisitor.local.couttime = "";
                 newVisitor.local.checkedout = "no";
-                console.log("Host email - ", hostemail);
-
-                // sendFunc.sendmail(hostemail);
 
                 newVisitor.save(function(err) {
                   if (err) return done(err);
 
                   return done(null, newVisitor);
+                });
+                Host.findOne({}, function(err, result) {
+                  if (err) console.log(err);
+                  console.log(result);
+                  sendFunc.sendmail(result.local.email);
+                  sendSMS.store(result.local.hostphone);
                 });
               }
             });

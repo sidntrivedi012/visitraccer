@@ -52,26 +52,26 @@ module.exports = function(app, passport) {
         res.redirect("/home");
       }
     });
-    // sendFunc.sendmail(reqData.emailid);
+    sendFunc.sendmail(reqData.email);
   });
 
   //HOST LOGINS=================================
 
-  app.get("/hostlogin", function(req, res) {
-    res.render("hostlogin.ejs", {
-      message: req.flash("loginMessage")
-    });
-  });
+  // app.get("/hostlogin", function(req, res) {
+  //   res.render("hostlogin.ejs", {
+  //     message: req.flash("loginMessage")
+  //   });
+  // });
 
   // process the login form
-  app.post(
-    "/hostlogin",
-    passport.authenticate("hostlogin", {
-      successRedirect: "/home", // redirect to the secure profile section
-      failureRedirect: "/hostlogin", // redirect back to the signup page if there is an error
-      failureFlash: true // allow flash messages
-    })
-  );
+  // app.post(
+  //   "/hostlogin",
+  //   passport.authenticate("hostlogin", {
+  //     successRedirect: "/home", // redirect to the secure profile section
+  //     failureRedirect: "/hostlogin", // redirect back to the signup page if there is an error
+  //     failureFlash: true // allow flash messages
+  //   })
+  // );
 
   // HOST SIGNUPS=================================
 
