@@ -59,14 +59,23 @@ Once Anant checks in and enters his details in the application, Vishesh should g
 
 ## Screenshots
 
-![Home Page](./public/screenshots/index.png)
+|![Home Page](./public/screenshots/index.png)|
+|:-------:|
+|*Landing Page*|
 ![Host Registration Page](./public/screenshots/hostregistration.png)
+|*Host Registration Page*|
 ![Landing Page](./public/screenshots/visitordashboard.png)
+|*Visitor Dashboard*|
 ![Visitor Registration](./public/screenshots/visitorregistration.png)
+|*Visitor Registration Page*|
 ![Check In Dashboard](./public/screenshots/checkindashboard.png)
+|*Current Check-in Dashboard*|
 ![Host email](./public/screenshots/hostemail.png)
+|*E-mail to host about upcoming visitor.*|
 ![Host SMS](./public/screenshots/hostsms.jpg)
+|*SMS to host about upcoming visitor*|
 ![Visitor Email](./public/screenshots/visitoremail.jpg)
+|*Email to visitor after the meeting ends.*|
 
 ## Setup
 
