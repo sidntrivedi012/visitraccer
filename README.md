@@ -3,7 +3,6 @@
 	<h1><b>visitraccer</b></h1>
 	<p><b>An interactive Entry Manager System to manage and log all the visits in an organization.</b></p>
 	</br>
-	</br>
 </div>
 
 ## About the Project
