@@ -66,7 +66,6 @@ module.exports = function(app, passport) {
       .exec(function(err, result) {
         if (err) console.error(err);
         console.log(reqData);
-
         hostname = result[0].local.hostname;
         address = result[0].local.address;
         let text =

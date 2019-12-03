@@ -155,57 +155,54 @@ module.exports = function(passport) {
         if (email) email = email.toLowerCase();
         // asynchronous
         process.nextTick(function() {
-          console.log(req.user);
+          Visitor.find({ "local.email": email }, function(err, user) {
+            // if there are any errors, return the error
+            if (err) return done(err);
+            else {
+              // create the user
+              var newVisitor = new Visitor();
 
-          // if the user is not already logged in:
-          if (!req.user) {
-            Visitor.find({ "local.email": email }, function(err, user) {
-              // if there are any errors, return the error
-              if (err) return done(err);
-              else {
-                // create the user
-                var newVisitor = new Visitor();
+              newVisitor.local.visitorname = req.body.visitorname;
+              newVisitor.local.email = email;
+              newVisitor.local.password = newVisitor.generateHash(password);
+              newVisitor.local.visitorphone = req.body.visitorphone;
+              newVisitor.local.checkedout = "no";
+              var d = new Date();
+              let day = d.getDay();
+              let hrs = d.getHours();
+              let mins = d.getMinutes();
+              let timestamp = hrs + ":" + mins;
+              newVisitor.local.cintime = timestamp;
+              newVisitor.local.couttime = "";
+              newVisitor.save(function(err) {
+                if (err) return done(err);
+                Host.findOne({})
+                  .sort({ _id: -1 })
+                  .limit(1)
+                  .exec(function(err, result) {
+                    if (err) console.log(err);
+                    console.log(result);
+                    let text =
+                      "Visitor Name - " +
+                      req.body.visitorname +
+                      "\n" +
+                      "Email address - " +
+                      email +
+                      "\n" +
+                      "Phone number - " +
+                      req.body.visitorphone +
+                      "\n" +
+                      "Check-in Time - " +
+                      timestamp +
+                      "\n";
+                    sendFunc.sendmail(result.local.email, "host", text);
+                    sendSMS.store(result.local.hostphone, text);
+                  });
+                return done(null, newVisitor);
+              });
+            }
+          });
 
-                newVisitor.local.visitorname = req.body.visitorname;
-                newVisitor.local.email = email;
-                newVisitor.local.password = newVisitor.generateHash(password);
-                newVisitor.local.visitorphone = req.body.visitorphone;
-                newVisitor.local.checkedout = "no";
-                var d = new Date();
-                let day = d.getDay();
-                let hrs = d.getHours();
-                let mins = d.getMinutes();
-                let timestamp = hrs + ":" + mins;
-                newVisitor.local.cintime = timestamp;
-                newVisitor.local.couttime = "";
-                newVisitor.save(function(err) {
-                  if (err) return done(err);
-                  Host.findOne({})
-                    .sort({ _id: -1 })
-                    .limit(1)
-                    .exec(function(err, result) {
-                      if (err) console.log(err);
-                      console.log(result);
-                      let text =
-                        "Visitor Name - " +
-                        req.body.visitorname +
-                        "\n" +
-                        "Email address - " +
-                        email +
-                        "\n" +
-                        "Phone number - " +
-                        req.body.visitorphone +
-                        "\n" +
-                        "Check-in Time - " +
-                        timestamp;
-                      sendFunc.sendmail(result.local.email, "host", text);
-                      sendSMS.store(result.local.hostphone, text);
-                    });
-                  return done(null, newVisitor);
-                });
-              }
-            });
-          }
           // if the user is logged in but has no local account...
           // } else if (!req.user.local.email) {
           //   // ...presumably they're trying to connect a local account

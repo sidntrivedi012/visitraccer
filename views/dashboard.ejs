@@ -15,30 +15,42 @@
         padding-top: 80px;
         word-wrap: break-word;
       }
+      p {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      }
+      h3 {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      }
+      #visphone {
+        display: none;
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-      $(document).ready(function () {
-        $("a").click(function () {
-         
-          var email=document.getElementById("email").innerHTML;
+      $(document).ready(function() {
+        $("a").click(function() {
+          var email = document.getElementById("email").innerHTML;
           var phoneno = document.getElementById("visphone").innerHTML;
-          var name=document.getElementById("visname").innerHTML;
-          var cintime=document.getElementById("cintime").innerHTML;
-           $.get("/checkout",
-              {
-                email: email,
-                phone: phoneno,
-                name: name,
-                cintime: cintime
-              },
-              function (data, status) {
-                console.log(status);
-                  
-                 window.location="/home";
-              });
-          });
+          var name = document.getElementById("visname").innerHTML;
+          var cintime = document.getElementById("cintime").innerHTML;
+          $.get(
+            "/checkout",
+            {
+              email: email,
+              phone: phoneno,
+              name: name,
+              cintime: cintime
+            },
+            function(data, status) {
+              console.log(status);
+
+              window.location = "/home";
+            }
+          );
         });
+      });
     </script>
   </head>
 
@@ -46,24 +58,24 @@
     <div class="container">
       <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Visitor's Dashboard</h1>
-    <!-- <a href="/visitorsignup" class="btn btn-default btn-sm" id="newButton"
+        <!-- <a href="/visitorsignup" class="btn btn-default btn-sm" id="newButton"
           >New Visitor Registration</a -->
-        
       </div>
 
-      <div class="row">
-        <div class="col-sm-6" >
-          <div class="well">
-            <h3 >
-              <p class="fa fa-user" id="visname"><%= users[0].local.visitorname %></p>
+      <div class="h-10  text-center">
+        <div class="col-6">
+          <div class="well col align-self-center">
+            <h3 class="fa fa-user">
+              <p id="visname"><%= users[0].local.visitorname %></p>
             </h3>
+            <h4>Email id</h4>
             <% if (users[0].local.email) { %>
-              <p>
-              <p id="email"><%= users[0].local.email %></p><br />
-              <p id="visphone"><%= users[0].local.visitorphone %></p><br />
-              <p id="cintime"><%= users[0].local.cintime %></p>
-              </p>
-            <a  class="btn btn-danger btn-lg" id="coutButton">Checkout</a>
+            <p id="email"><%= users[0].local.email %></p>
+            <p id="visphone"><%= users[0].local.visitorphone %></p>
+            <h4>Check-in Time</h4>
+            <p id="cintime"><%= users[0].local.cintime %></p>
+            <br />
+            <a class="btn btn-danger btn-lg" id="coutButton">Checkout</a>
             <% } %>
           </div>
         </div>
