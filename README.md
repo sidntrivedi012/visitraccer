@@ -1,6 +1,6 @@
 <div align="center">
 	<img  src="./public/screenshots/banner.png" alt="logo">
-	<h1><b>visitraccer</b></h1>
+	<h1><b>Visitraccer</b></h1>
 	<p><b>An interactive Entry Manager System to manage and log all the visits in an organization.</b></p>
 	</br>
 </div>
