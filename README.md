@@ -1,5 +1,8 @@
+<img src="./public/screenshots/banner.png" align="middle">
+
 # visitraccer
 > An interactive Entry Manager System to manage and log all the visits in an organization. 
+
 
 ## About the Project
 
